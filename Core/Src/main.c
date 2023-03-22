@@ -48,7 +48,6 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 uint32_t InputCaptureBuffer[IC_BUFFER_SIZE];
 float averageRisingedgePeriod;
-
 uint16_t MotorSetDuty = 0;
 /* USER CODE END PV */
 
@@ -61,6 +60,7 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 float IC_Calc_Period();
+void PWMSet();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -123,7 +123,6 @@ int main(void)
 
 		  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, MotorSetDuty);
 
-		  //เสร็
 	  }
   }
   /* USER CODE END 3 */
@@ -406,6 +405,15 @@ float IC_Calc_Period(){
 	}
 
 	return sumdiff / 5.0;
+}
+void PWMSet()
+{
+	if(MotorSetDuty > 100){
+		MotorSetDuty = 100;
+	}
+	 uint16_t compare_value = (MotorSetDuty * PWM_PERIOD) / PWM_RESOLUTION;
+	 MotorSetDuty = CompareValue/TimePeriod;
+
 }
 /* USER CODE END 4 */
 
