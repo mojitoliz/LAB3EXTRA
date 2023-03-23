@@ -49,6 +49,7 @@ UART_HandleTypeDef huart2;
 uint32_t InputCaptureBuffer[IC_BUFFER_SIZE];
 float averageRisingedgePeriod;
 uint16_t MotorSetDuty = 0;
+uint16_t MotorReadRPM = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,7 +61,6 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 float IC_Calc_Period();
-void PWMSet();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -123,6 +123,11 @@ int main(void)
 
 		  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, MotorSetDuty);
 
+
+		  MotorReadRPM = (60*1000000)/(64*12*averageRisingedgePeriod);
+		  if( MotorSetDuty < 0){
+			  MotorReadRPM = 0;
+		  }
 	  }
   }
   /* USER CODE END 3 */
@@ -197,7 +202,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 83;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 999;
+  htim1.Init.Period = 99;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -406,15 +411,7 @@ float IC_Calc_Period(){
 
 	return sumdiff / 5.0;
 }
-void PWMSet()
-{
-	if(MotorSetDuty > 100){
-		MotorSetDuty = 100;
-	}
-	 uint16_t compare_value = (MotorSetDuty * PWM_PERIOD) / PWM_RESOLUTION;
-	 MotorSetDuty = CompareValue/TimePeriod;
 
-}
 /* USER CODE END 4 */
 
 /**
